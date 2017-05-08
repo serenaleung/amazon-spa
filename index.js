@@ -31,7 +31,16 @@ function renderProduct(product){
   <button class="back">Back</button>
   <h1>${product.title}</h1>
   <p>${product.description}</p>
+  <ul class="reviews-list">
+    ${renderReviews(product.reviews)}
+  </ul>
   `
+}
+
+function renderReviews (reviews) {
+  return reviews.map(function (review) {
+    return `<li class="review">${review.body}</li>`
+  }).join('');
 }
 
 document.addEventListener('DOMContentLoaded', function () {

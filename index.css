@@ -9,3 +9,7 @@ html {
 .hidden {
   visibility: hidden;
 }
+
+.product-summary {
+ margin-bottom: 20px;
+}
