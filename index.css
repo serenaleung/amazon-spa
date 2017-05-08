@@ -7,7 +7,7 @@ html {
 }
 
 .hidden {
-  visibility: hidden;
+  display: none;
 }
 
 .product-summary {

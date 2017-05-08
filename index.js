@@ -11,6 +11,22 @@ function getProduct (id) {
 	.then(function (res) { return res.json() });
 }
 
+function postProduct (productParams) {
+  return fetch(
+    `${DOMAIN}/api/v1/products?api_token=${API_TOKEN}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      // {title: 'dasdas', body: 'dasdas'}
+      // should look likeð
+      // {product: {title: 'dasdadssa', body: 'dasdas'}}
+      body: JSON.stringify({product: productParams})
+    }
+  )
+}
+
 function renderProducts (products) {
   return products.map(function (product) {
     return `
@@ -27,9 +43,11 @@ function renderProducts (products) {
 }
 
 function renderProduct(product){
+  console.log(product)
   return `
   <button class="back">Back</button>
   <h1>${product.title}</h1>
+  <p>$${product.price}</p>
   <p>${product.description}</p>
   <ul class="reviews-list">
     ${renderReviews(product.reviews)}
@@ -50,10 +68,18 @@ document.addEventListener('DOMContentLoaded', function () {
   // run once every HTML tag has been rendered by the browser
   const productsList = document.querySelector('#products-list');
   const productDetails = document.querySelector('#product-details');
+  const productForm = document.querySelector('#product-form');
 
-  getProducts()
+  function loadProducts () {
+    getProducts()
     .then(renderProducts)
-    .then(function (html) { productsList.innerHTML = html });
+    .then(function (html)
+    { console.log(html)
+      productsList.innerHTML = html });
+
+  }
+    loadProducts();
+
 
     productsList.addEventListener('click', function (event) {
     const { target } = event;
@@ -78,5 +104,21 @@ document.addEventListener('DOMContentLoaded', function () {
       productDetails.classList.add('hidden');
       productsList.classList.remove('hidden');
     }
+  });
+
+  productForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    const title = event.currentTarget.querySelector('#title');
+    const price = event.currentTarget.querySelector('#price');
+    const description = event.currentTarget.querySelector('#description');
+    const fData = new FormData(event.currentTarget);
+
+    postProduct({title: fData.get('title'), description: fData.get('description'), price: fData.get('price')})
+    .then(function() {
+      loadProducts();
+    })
   })
+
+
 });
