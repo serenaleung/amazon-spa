@@ -15,11 +15,23 @@ function renderProducts (products) {
   return products.map(function (product) {
     return `
       <div class="product-summary">
-        ${product.title}
+        <a
+          data-id=${product.id}
+          href
+          class="product-link">
+            ${product.title}
+        </a>
       </div>
-      <hr />
     `
   }).join('')
+}
+
+function renderProduct(product){
+  return `
+  <button class="back">Back</button>
+  <h1>${product.title}</h1>
+  <p>${product.description}</p>
+  `
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -28,8 +40,34 @@ document.addEventListener('DOMContentLoaded', function () {
   // JavaScript inside of a DOMContentLoaded event handler will
   // run once every HTML tag has been rendered by the browser
   const productsList = document.querySelector('#products-list');
+  const productDetails = document.querySelector('#product-details');
 
   getProducts()
     .then(renderProducts)
-    .then(function (html) { productsList.innerHTML = html })
+    .then(function (html) { productsList.innerHTML = html });
+
+    productsList.addEventListener('click', function (event) {
+    const { target } = event;
+
+    if (target.matches('.product-link')) {
+      event.preventDefault();
+      const productId = target.getAttribute('data-id');
+
+      getProduct(productId)
+       .then(function (product) {
+         productDetails.innerHTML = renderProduct(product);
+         productsList.classList.add('hidden');
+         productDetails.classList.remove('hidden');
+       });
+    }
+  });
+
+  productDetails.addEventListener('click', function(event) {
+    const {target} = event;
+
+    if (target.matches('button.back')) {
+      productDetails.classList.add('hidden');
+      productsList.classList.remove('hidden');
+    }
+  })
 });
